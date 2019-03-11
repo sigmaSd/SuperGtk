@@ -5,21 +5,37 @@ use std::rc::Rc;
 
 pub type RefGtk = Rc<RefCell<SUPERGTK>>;
 
+/// Use it to create and get widgets, and to start gtk
+///
+/// Any widget created by it will be internally saved so you can retreive it with its id
 #[derive(Default)]
 pub struct SUPERGTK {
     widgets_map: HashMap<&'static str, HashMap<&'static str, Widget>>,
 }
 
 impl SUPERGTK {
+    /// Init gtk and creates a Rc<RefCell\<SUPERGTK\>> for ease of use
+    ///
+    /// Use it at the start of the program
     pub fn new() -> RefGtk {
         gtk::init().expect("Error while initilizing gtk");
         Default::default()
     }
 
+    /// Run the app
+    ///
+    /// Use it at the end of the program
     pub fn run() {
         gtk::main();
     }
+}
 
+/// Create widgets with specified id
+///
+/// Same widget, kind same id -> will be overwritten
+///
+/// Diffrent widget, same id -> will be added to that id's widget group
+impl SUPERGTK {
     pub fn create_win(&mut self, id: &'static str) -> Window {
         let win = Window::new(WindowType::Toplevel);
         let win_c = win.clone();
@@ -68,14 +84,27 @@ impl SUPERGTK {
         self.add_to_map(id, header_bar, "HeaderBar");
         header_bar_c
     }
+}
 
-    // getter
-
-    pub fn get_box(&self, id: &str) -> Box {
-        self.widgets_map[id]["Box"]
+/// Functions to get the widgets back by id
+impl SUPERGTK {
+    pub fn get_win(&self, id: &str) -> Window {
+        self.widgets_map[id]["Window"]
             .clone()
-            .downcast::<Box>()
-            .expect("Not a box")
+            .downcast::<Window>()
+            .expect("Not a win")
+    }
+    pub fn get_grid(&self, id: &str) -> Grid {
+        self.widgets_map[id]["Grid"]
+            .clone()
+            .downcast::<Grid>()
+            .expect("Not a grid")
+    }
+    pub fn get_button(&self, id: &str) -> Button {
+        self.widgets_map[id]["Button"]
+            .clone()
+            .downcast::<Button>()
+            .expect("Not a button")
     }
     pub fn get_label(&self, id: &str) -> Label {
         self.widgets_map[id]["Label"]
@@ -89,25 +118,22 @@ impl SUPERGTK {
             .downcast::<Entry>()
             .expect("Not a entry")
     }
-    pub fn get_button(&self, id: &str) -> Button {
-        self.widgets_map[id]["Button"]
+    pub fn get_box(&self, id: &str) -> Box {
+        self.widgets_map[id]["Box"]
             .clone()
-            .downcast::<Button>()
-            .expect("Not a button")
+            .downcast::<Box>()
+            .expect("Not a box")
     }
-    pub fn get_win(&self, id: &str) -> Window {
-        self.widgets_map[id]["Window"]
+    pub fn get_headerbar(&self, id: &str) -> HeaderBar {
+        self.widgets_map[id]["HeaderBar"]
             .clone()
-            .downcast::<Window>()
-            .expect("Not a win")
+            .downcast::<HeaderBar>()
+            .expect("Not a headerbar")
     }
-    pub fn get_grid(&self, id: &str) -> Grid {
-        self.widgets_map[id]["Grid"]
-            .clone()
-            .downcast::<Grid>()
-            .expect("Not a grid")
-    }
+}
 
+// Private functions
+impl SUPERGTK {
     fn add_to_map<T: IsA<Widget>>(&mut self, id: &'static str, widget: T, w_type: &'static str) {
         let widgets_map = &mut self.widgets_map;
         match widgets_map.entry(id) {
