@@ -5,11 +5,9 @@ use std::rc::Rc;
 
 pub type RefGtk = Rc<RefCell<SUPERGTK>>;
 
-type WidgetsMap<T> = Rc<RefCell<HashMap<&'static str, T>>>;
-
 #[derive(Default)]
 pub struct SUPERGTK {
-    widgets_map: WidgetsMap<HashMap<&'static str, Widget>>,
+    widgets_map: HashMap<&'static str, HashMap<&'static str, Widget>>,
 }
 
 impl SUPERGTK {
@@ -74,44 +72,44 @@ impl SUPERGTK {
     // getter
 
     pub fn get_box(&self, id: &str) -> Box {
-        self.widgets_map.borrow()[id]["Box"]
+        self.widgets_map[id]["Box"]
             .clone()
             .downcast::<Box>()
             .expect("Not a box")
     }
     pub fn get_label(&self, id: &str) -> Label {
-        self.widgets_map.borrow()[id]["Label"]
+        self.widgets_map[id]["Label"]
             .clone()
             .downcast::<Label>()
             .expect("Not a label")
     }
     pub fn get_entry(&self, id: &str) -> Entry {
-        self.widgets_map.borrow()[id]["Entry"]
+        self.widgets_map[id]["Entry"]
             .clone()
             .downcast::<Entry>()
             .expect("Not a entry")
     }
     pub fn get_button(&self, id: &str) -> Button {
-        self.widgets_map.borrow()[id]["Button"]
+        self.widgets_map[id]["Button"]
             .clone()
             .downcast::<Button>()
             .expect("Not a button")
     }
     pub fn get_win(&self, id: &str) -> Window {
-        self.widgets_map.borrow()[id]["Window"]
+        self.widgets_map[id]["Window"]
             .clone()
             .downcast::<Window>()
             .expect("Not a win")
     }
     pub fn get_grid(&self, id: &str) -> Grid {
-        self.widgets_map.borrow()[id]["Grid"]
+        self.widgets_map[id]["Grid"]
             .clone()
             .downcast::<Grid>()
             .expect("Not a grid")
     }
 
     fn add_to_map<T: IsA<Widget>>(&mut self, id: &'static str, widget: T, w_type: &'static str) {
-        let mut widgets_map = self.widgets_map.borrow_mut();
+        let widgets_map = &mut self.widgets_map;
         match widgets_map.entry(id) {
             hash_map::Entry::Occupied(widgets_group) => {
                 widgets_group.into_mut().insert(w_type, widget.upcast());

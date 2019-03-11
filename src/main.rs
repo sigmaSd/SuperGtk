@@ -67,19 +67,58 @@ fn create_entry_win(sk: &RefGtk) {
     win.show_all();
 
     entry.connect_activate(move |entry| {
+        let sk_cc = sk_c.clone();
         let name = entry.get_text().unwrap().to_string();
+        let name = string_to_static_str(&name);
+
         let table = sk_c.borrow().get_grid("MainTable");
 
-        let label = sk_c.borrow_mut().create_label(string_to_static_str(&name));
-        label.set_text(&name);
+        let button = sk_c.borrow_mut().create_button(name);
+        button.set_label(name);
+        button.connect_clicked(move |_| open_client_window(&sk_cc, name));
 
         table.attach_next_to(
-            &label,
+            &button,
             table.get_children().iter().next(),
             PositionType::Bottom,
             10,
             10,
         );
+        table.show_all();
+
+        win.destroy();
+    });
+}
+
+fn open_client_window(sk: &RefGtk, name: &'static str) {
+    let sk_c = sk.clone();
+    let mut sk = sk.borrow_mut();
+
+    let win = sk.create_win("ClientWin");
+    let vbox = sk.create_box("ClientWin", Orientation::Vertical, 10);
+
+    let headerbar = sk.create_headerbar("ClientWin");
+    let entry = sk.create_entry("ClientWin");
+    let save_btn = sk.create_button("ClientWin");
+
+    vbox.add(&headerbar);
+    vbox.add(&entry);
+    vbox.add(&save_btn);
+
+    win.add(&vbox);
+    win.show_all();
+
+    save_btn.connect_clicked(move |_| {
+        let sk = sk_c.borrow();
+
+        let table = sk.get_grid("MainTable");
+        let name_btn = sk.get_button(name);
+
+        let text = entry.get_text().unwrap().to_string();
+        let text = string_to_static_str(&text);
+        let label = Label::new(text);
+
+        table.attach_next_to(&label, &name_btn, PositionType::Right, 10, 10);
         table.show_all();
 
         win.destroy();
