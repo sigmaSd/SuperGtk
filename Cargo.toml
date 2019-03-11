@@ -3,6 +3,9 @@ name = "supergtk"
 version = "0.1.0"
 authors = ["Nbiba Bedis <bedisnbiba@gmail.com>"]
 edition = "2018"
+description = "Wrapper over gtk-rs for(maybe) more ergonamic use"
+repository = "https://github.com/sigmaSd/SuperGtk"
+license = "MIT"
 
 [dependencies]
 gtk = "0.6.0"
