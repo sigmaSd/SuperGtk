@@ -1,0 +1,9 @@
+[package]
+name = "supergtk"
+version = "0.1.0"
+authors = ["Nbiba Bedis <bedisnbiba@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+gtk = "0.6.0"
+glib = "0.7.1"
