@@ -3,18 +3,18 @@ use std::cell::RefCell;
 use std::collections::{hash_map, HashMap};
 use std::rc::Rc;
 
-pub type RefGtk = Rc<RefCell<SUPERGTK>>;
+pub type RefGtk = Rc<RefCell<SuperGtk>>;
 
 /// Use it to create and get widgets, and to start gtk
 ///
 /// Any widget created by it will be internally saved so you can retreive it with its id
 #[derive(Default)]
-pub struct SUPERGTK {
+pub struct SuperGtk {
     widgets_map: HashMap<&'static str, HashMap<&'static str, Widget>>,
 }
 
-impl SUPERGTK {
-    /// Init gtk and creates a Rc<RefCell\<SUPERGTK\>> for ease of use
+impl SuperGtk {
+    /// Init gtk and creates a Rc<RefCell\<SuperGtk\>> for ease of use
     ///
     /// Use it at the start of the program
     pub fn new() -> RefGtk {
@@ -35,7 +35,7 @@ impl SUPERGTK {
 /// Same widget, kind same id -> will be overwritten
 ///
 /// Diffrent widget, same id -> will be added to that id's widget group
-impl SUPERGTK {
+impl SuperGtk {
     pub fn create_win(&mut self, id: &'static str) -> Window {
         let win = Window::new(WindowType::Toplevel);
         let win_c = win.clone();
@@ -87,7 +87,7 @@ impl SUPERGTK {
 }
 
 /// Functions to get the widgets back by id
-impl SUPERGTK {
+impl SuperGtk {
     pub fn get_win(&self, id: &str) -> Window {
         self.widgets_map[id]["Window"]
             .clone()
@@ -133,7 +133,7 @@ impl SUPERGTK {
 }
 
 // Private functions
-impl SUPERGTK {
+impl SuperGtk {
     fn add_to_map<T: IsA<Widget>>(&mut self, id: &'static str, widget: T, w_type: &'static str) {
         let widgets_map = &mut self.widgets_map;
         match widgets_map.entry(id) {

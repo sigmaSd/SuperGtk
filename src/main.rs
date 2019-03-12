@@ -1,13 +1,13 @@
 use gtk::*;
-use supergtk::{RefGtk, SUPERGTK};
+use supergtk::{RefGtk, SuperGtk};
 
 fn main() {
-    let sk = SUPERGTK::new();
+    let sk = SuperGtk::new();
 
     create_gui(&sk);
     connect_signals(&sk);
 
-    SUPERGTK::run();
+    SuperGtk::run();
 }
 
 fn create_gui(sk: &RefGtk) {
