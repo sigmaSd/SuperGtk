@@ -132,6 +132,14 @@ impl SuperGtk {
     }
 }
 
+//utils
+impl SuperGtk {
+    /// Convert an &str to a &'static str, it has some use cases
+    pub fn str_to_static(s: &str) -> &'static str {
+        std::boxed::Box::leak(s.to_string().into_boxed_str())
+    }
+}
+
 // Private functions
 impl SuperGtk {
     fn add_to_map<T: IsA<Widget>>(&mut self, id: &'static str, widget: T, w_type: &'static str) {

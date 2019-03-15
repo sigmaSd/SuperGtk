@@ -69,7 +69,7 @@ fn create_entry_win(sk: &RefGtk) {
     entry.connect_activate(move |entry| {
         let sk_cc = sk_c.clone();
         let name = entry.get_text().unwrap().to_string();
-        let name = string_to_static_str(&name);
+        let name = SuperGtk::str_to_static(&name);
 
         let table = sk_c.borrow().get_grid("MainTable");
 
@@ -115,16 +115,11 @@ fn open_client_window(sk: &RefGtk, name: &'static str) {
         let name_btn = sk.get_button(name);
 
         let text = entry.get_text().unwrap().to_string();
-        let text = string_to_static_str(&text);
-        let label = Label::new(text);
+        let label = Label::new(text.as_str());
 
         table.attach_next_to(&label, &name_btn, PositionType::Right, 10, 10);
         table.show_all();
 
         win.destroy();
     });
-}
-
-fn string_to_static_str(s: &str) -> &'static str {
-    std::boxed::Box::leak(s.to_string().into_boxed_str())
 }
